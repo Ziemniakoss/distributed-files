@@ -34,10 +34,15 @@ ul.item-list {
 	list-style: none;
 }
 
-#title-and-options{
+#title-and-options {
 	display: flex;
 }
-#directory-options{
+
+#directory-options {
 	display: flex;
 	align-items: center;
+}
+
+ul.item-list > li {
+	margin: 1em 0;
 }

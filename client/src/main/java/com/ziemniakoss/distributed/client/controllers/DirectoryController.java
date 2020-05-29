@@ -2,7 +2,7 @@ package com.ziemniakoss.distributed.client.controllers;
 
 import com.ziemniakoss.distributed.client.repositories.DirectoryDoesNotExistsException;
 import com.ziemniakoss.distributed.client.services.DirectoriesManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ziemniakoss.distributed.client.services.FilesManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,14 +13,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class DirectoryController {
 	private final DirectoriesManager directoriesManager;
+	private final FilesManager filesManager;
 
-	public DirectoryController(DirectoriesManager directoriesManager) {
+	public DirectoryController(DirectoriesManager directoriesManager, FilesManager filesManager) {
 		this.directoriesManager = directoriesManager;
+		this.filesManager = filesManager;
 	}
 
 	@GetMapping("/")
-	public String showRoot(Model model) {
+	public String showRoot(Model model){
 		model.addAttribute("subdirectories", directoriesManager.getRootSubdirectories());
+		try {
+			model.addAttribute("files", filesManager.getAllInDirectory(null));
+		}catch (DirectoryDoesNotExistsException ignored){
+			//nie zostanie rzucone bo folder jest nullem
+		}
 		return "directory_view";
 	}
 
@@ -29,6 +36,7 @@ public class DirectoryController {
 		try{
 			model.addAttribute("directory",directoriesManager.getDirectory(directoryId));
 			model.addAttribute("subdirectories", directoriesManager.getAllSubdirectories(directoryId));
+			model.addAttribute("files", filesManager.getAllInDirectory(directoryId));
 			return "directory_view";
 		} catch (DirectoryDoesNotExistsException e) {
 			return "error_404";

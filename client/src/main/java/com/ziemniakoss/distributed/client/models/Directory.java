@@ -22,7 +22,7 @@ public class Directory {
 	}
 
 	public void setName(String name) {
-		this.name = name.trim();
+		this.name = name == null ? null : name.trim();
 	}
 
 	public Directory getParent() {

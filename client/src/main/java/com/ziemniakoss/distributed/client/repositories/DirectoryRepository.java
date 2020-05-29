@@ -60,35 +60,40 @@ public class DirectoryRepository implements IDirectoryRepository {
 
 	@Override
 	public void remove(Directory directory) throws DirectoryDoesNotExistsException {
-		if(jdbcTemplate.update("DELETE FROM directories WHERE d.id = ?",directory.getId() )==0){
+		if (jdbcTemplate.update("DELETE FROM directories WHERE d.id = ?", directory.getId()) == 0) {
 			throw new DirectoryDoesNotExistsException();
 		}
 	}
 
 	@Override
 	public Optional<List<Directory>> getAllSubdirectories(Directory directory) {
-		if(directory == null){
-			return Optional.of(jdbcTemplate.query(BASE_QUERY + " WHERE d.parent = null", (rs,rn)->map(rs)));
+		if (directory == null) {
+			return Optional.of(jdbcTemplate.query(BASE_QUERY + " WHERE d.parent is null ", (rs, rn) -> map(rs)));
 		}
-		if(!exists(directory)){
+		if (!exists(directory)) {
 			return Optional.empty();
 		}
-		return Optional.of(jdbcTemplate.query(BASE_QUERY + "WHERE d.parent = ?", (rs, rn)->map(rs), directory.getId()));
+		return Optional.of(jdbcTemplate.query(BASE_QUERY + "WHERE d.parent = ?", (rs, rn) -> map(rs), directory.getId()));
 	}
 
 	@Override
 	public Optional<Directory> getParent(Directory d) throws DirectoryDoesNotExistsException {
 		Optional<Directory> opt = get(d.getId());
-		if(opt.isPresent()){
+		if (opt.isPresent()) {
 			return Optional.ofNullable(opt.get().getParent());
-		}else{
+		} else {
 			throw new DirectoryDoesNotExistsException();
 		}
 	}
 
 	@Override
 	public Optional<List<Directory>> getPathTo(Directory d) {
-		return Optional.empty();//todo
+		Assert.notNull(d, "Directory can't be null");
+		if (!exists(d)) {
+			return Optional.empty();
+		}
+		return Optional.of(jdbcTemplate.query("SELECT * FROM get_path_to_directory(?)",
+				(rs, rn) -> map(rs), d.getId()));
 	}
 
 	private Directory map(ResultSet rs) throws SQLException {
@@ -96,7 +101,7 @@ public class DirectoryRepository implements IDirectoryRepository {
 		result.setId(rs.getInt("id"));
 		result.setName(rs.getString("name"));
 		int parentId = rs.getInt("p_id");
-		if(!rs.wasNull()){
+		if (!rs.wasNull()) {
 			Directory parent = new Directory();
 			parent.setName(rs.getString("p_name"));
 			parent.setId(parentId);

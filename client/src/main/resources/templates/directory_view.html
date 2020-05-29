@@ -14,17 +14,19 @@
 	<section th:if="${directory != null}" id="title-and-options">
 		<h1 th:text="${directory.getName()}"></h1>
 		<section id="directory-options">
-			<form th:if="${directory.getParent() != null}" class="back-button" th:action="${'/' + directory.getParent().getId()}">
-				<button th:if="${directory.getParent() != null}" class="back-button" >
+			<form th:if="${directory.getParent() != null}" class="back-button"
+				  th:action="${'/' + directory.getParent().getId()}">
+				<button th:if="${directory.getParent() != null}" class="back-button">
 					<img src="https://w7.pngwing.com/pngs/692/857/png-transparent-computer-icons-arrow-back-angle-triangle-monochrome.png">
 				</button>
 			</form>
 			<form th:if="${directory.getParent() == null}" class="back-button" action="/">
-				<button class="back-button" >
+				<button class="back-button">
 					<img src="https://w7.pngwing.com/pngs/692/857/png-transparent-computer-icons-arrow-back-angle-triangle-monochrome.png">
 				</button>
 			</form>
-			<form th:if="${directory.getParent() != null}" class="option-button" th:action="${'/' + directory.getId() + '/add-directory'}">
+			<form th:if="${directory.getParent() != null}" class="option-button"
+				  th:action="${'/' + directory.getId() + '/add-directory'}">
 				<button>Dodaj nowy folder</button>
 			</form>
 			<form th:if="${directory.getParent() == null}" class="option-button" action="/">
@@ -35,7 +37,7 @@
 			</form>
 		</section>
 	</section>
-	<section th:if="${directory == null}">
+	<section th:if="${directory == null}" id="title-and-options">
 		<h1>~</h1>
 		<section id="directory-options">
 			<form class="option-button" action="/add-directory">
@@ -56,16 +58,27 @@
 							<div th:text="${subDir.name}"></div>
 						</div>
 					</a>
-					<form class="delete-button">
+					<form class="delete-button" th:action="${'/' + subDir.getId()+'/delete'}">
 						<button class="delete-button">Usuń</button>
 					</form>
 				</section>
-
+			</li>
+			<li th:each="file : ${files}">
+				<section class="item">
+					<a href="/">
+						<div class="list-item-wrapper">
+							<img src="">
+							<div th:text="${file.getName()}"></div>
+							<div th:text="${file.getCreationDate()}" class="date-label"></div>
+						</div>
+					</a>
+					<form class="delete-button" th:action="${'/file/' + file.getId()+ '/delete'}">
+						<button class="delete-button">Usuń</button>
+					</form>
+				</section>
 			</li>
 		</ul>
 	</section>
-	</section>
-
 </main>
 </body>
 </html>
