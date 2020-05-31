@@ -54,7 +54,7 @@ public class DirectoryRepository implements IDirectoryRepository {
 			case -3:
 				throw new IllegalArgumentException("Directory with same name in this directory already exists");
 			case -4:
-				throw new IllegalArgumentException("Direcotry name must can only have letters, numbers, spaces and _ - in name");
+				throw new IllegalArgumentException("Directory name must can only have letters, numbers, spaces and _ - in name");
 		}
 	}
 

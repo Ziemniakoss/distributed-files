@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Utwórz nowy folder</title>
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/add-directory.css">
+</head>
+<body>
+<aside th:insert="messages"></aside>
+<main>
+	<section>
+		<h2>Utwórz nowy podfolder</h2>
+		<form id="new-directory-form" th:if="${fullPath.equals('~/')}" action="/add-directory" method="post">
+			<section class="input-grid">
+				<label th:text="${shortPath}" th:title="${fullPath}" for="new-dir-name"></label>
+				<input type="text" pattern="[a-zA-Z0-9_\\-]+" required id="new-dir-name"
+					   title="Nazwa może zawierać litery i cyfry, spacje i -_" name="name">
+			</section>
+			<section class="buttons">
+				<button class="green-button">Utwórz</button>
+			</section>
+		</form>
+		<form id="new-directory-form" th:if="${!fullPath.equals('~/')}" th:action="${'/'+ parentId +'/add-directory'}"
+			  method="post">
+			<section class="input-grid">
+				<label th:text="${shortPath}" th:title="${fullPath}" for="new-dir-name"></label>
+				<input type="text" pattern="[a-zA-Z0-9_\\-]+" required id="new-dir-name"
+					   title="Nazwa może zawierać litery i cyfry, spacje i -_" name="name">
+			</section>
+			<section class="buttons">
+				<button class="green-button">Utwórz</button>
+			</section>
+		</form>
+	</section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<body>
+<ul th:if="${errorMessages != null}" class="error-messages">
+	<li th:each="errorMessage : ${errorMessages}" class="error-message">
+		<div th:text="${errorMessage}" class="error-message"></div>
+	</li>
+</ul>
+<div th:if="${successMessage != null}" th:text="${successMessage}"></div>
+</body>
