@@ -43,7 +43,7 @@ public class FileRepository implements IFileRepository {
 					" FROM files f " +
 					" LEFT JOIN directories d on f.directory = d.id" +
 					" WHERE d.id = ?";
-			queryResult = jdbcTemplate.query(sql, (rs,rn)->map(rs), directory.getId());
+			queryResult = jdbcTemplate.query(sql, (rs, rn) -> map(rs), directory.getId());
 		}
 		return queryResult.parallelStream().
 				peek(e -> e.setDirectory(directory)).
@@ -69,7 +69,7 @@ public class FileRepository implements IFileRepository {
 	}
 
 	@Override
-	public void add(File file, Directory directory) throws DirectoryDoesNotExistsException {
+	public int add(File file, Directory directory) throws DirectoryDoesNotExistsException {
 		Assert.notNull(file, "File can't be null");
 		Assert.notNull(file.getHash(), "Hash must be calculated");
 		Assert.isTrue(file.getHash().length() == 32, "MD5 hash must have 32 characters");
@@ -77,6 +77,17 @@ public class FileRepository implements IFileRepository {
 		int result = jdbcTemplate.queryForObject("SELECT * FROM create_file(?,?,?);", Integer.class,
 				file.getName(), file.getHash(), file.getSize(),
 				directory == null ? null : directory.getId());
+		switch (result) {
+			case -1:
+				throw new IllegalArgumentException("Name can't be null");
+			case -2:
+				throw new IllegalArgumentException("MD5 hash with illegal length");
+			case -3:
+				throw new IllegalArgumentException("Size must be grater than 0");
+			case -4:
+				throw new DirectoryDoesNotExistsException();
+		}
+		return result;
 	}
 
 	@Override

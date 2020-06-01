@@ -10,7 +10,7 @@ public interface IFileRepository {
 
 	List<File> getAllInDirectory(Directory directory) throws DirectoryDoesNotExistsException;
 
-	void add(File file, Directory directory) throws DirectoryDoesNotExistsException;
+	int add(File file, Directory directory) throws DirectoryDoesNotExistsException;
 
 	void remove(File file) throws FileDoesNotExistsException;
 

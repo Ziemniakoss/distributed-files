@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Dodaj nowy plik</title>
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/add-file.css">
+</head>
+<body>
+<aside th:insert="messages"></aside>
+<main>
+	<section id="new-file-section">
+		<h2>Dodaj nowy plik</h2>
+		<form th:if="${parentDir != null}" th:action="${'/' + parentDir.getId() + '/add-file'}" method="post"
+			  enctype="multipart/form-data"
+			  id="new-file-form">
+			<label for="file-input">Plik</label>
+			<input type="file" name="file" required id="file-input">
+			<button class="green-button">Dodaj</button>
+			<section id="servers-selection">
+				<input th:each="server : ${servers}" type="checkbox" name="serverId" th:value="${server.getId()}"
+					   th:text="${server.getName()+'' + server.getUrl()+')'}">
+			</section>
+			<button class="green-button">Utwórz na sererach</button>
+		</form>
+
+		<form th:if="${parentDir == null}" action="/add-file" method="post" enctype="multipart/form-data"
+			  id="new-file-form">
+			<label for="file-input">Plik</label>
+			<input type="file" name="file" required id="file-input">
+			<button class="green-button">Dodaj</button>
+			<section id="servers-selection">
+				<input th:each="server : ${servers}" type="checkbox" name="serverId" th:value="${server.getId()}"
+					   th:text="${server.getName()+'' + server.getUrl()+')'}">
+				<button class="green-button">Utwórz na sererach</button>
+			</section>
+		</form>
+	</section>
+</main>
+</body>
+</html>
