@@ -6,10 +6,15 @@ import com.ziemniakoss.distributed.client.models.Server;
 import com.ziemniakoss.distributed.client.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,10 +33,11 @@ public class FilesManager {
 	private final IServerRepository serverRepository;
 	private final IServerFilesRepository serverFilesRepository;
 
-	public FilesManager(IDirectoryRepository directoryRepository, IFileRepository fileRepository, IServerRepository serverRepository) {
+	public FilesManager(IDirectoryRepository directoryRepository, IFileRepository fileRepository, IServerRepository serverRepository, IServerFilesRepository serverFilesRepository) {
 		this.directoryRepository = directoryRepository;
 		this.fileRepository = fileRepository;
 		this.serverRepository = serverRepository;
+		this.serverFilesRepository = serverFilesRepository;
 	}
 
 	public List<File> getAllInDirectory(Integer directoryId) throws DirectoryDoesNotExistsException {
@@ -67,13 +73,23 @@ public class FilesManager {
 	}
 
 	private void sendTo(Server server, byte[] file, File fileData) {
-		log.info("Sending file " + fileData.getId() + " to server " + server.getUrl());
+		log.debug("Sending file " + fileData.getId() + " to server " + server.getUrl());
 		RestTemplate rs = new RestTemplate();
-		HttpEntity entity = new HttpEntity(file);
-//		rs.postForLocation()
-///todo wysłanie
-		serverFilesRepository.addToServer(fileData, server);
-
+		rs.getMessageConverters().add(new FormHttpMessageConverter());
+		MultiValueMap<String, Object> requestParameterMap = new LinkedMultiValueMap<>();
+		requestParameterMap.add("attachement", new MultipartByteArrayResource(file, fileData.getName()));
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		HttpEntity entity = new HttpEntity(requestParameterMap, headers);
+		rs.postForObject(server.getUrl()+"/files/"+fileData.getId(), entity, String.class);
+		try {
+			serverFilesRepository.addToServer(fileData, server);
+		} catch (ServerDoesNotExistsException e) {
+			log.error("File {} was just sent to non existing server {}", fileData.getId(), server.getUrl());
+		} catch (FileDoesNotExistsException e) {
+			log.error("File that does not exist in database(id={}) was sent to server {}", fileData.getId(), server.getUrl());
+			log.error("Please check if this file was not sent to another servers");
+		}
 	}
 
 	private String calculateMd5Hash(MultipartFile file) throws IOException {
@@ -94,5 +110,23 @@ public class FilesManager {
 			}
 		}
 		return sb.toString();
+	}
+
+	private class MultipartByteArrayResource extends ByteArrayResource {
+		private String filename;
+
+		public MultipartByteArrayResource(byte[] byteArray, String filename) {
+			super(byteArray);
+			this.filename = filename;
+		}
+
+		public void setFilename(String filename) {
+			this.filename = filename;
+		}
+
+		@Override
+		public String getFilename() {
+			return filename;
+		}
 	}
 }

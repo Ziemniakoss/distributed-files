@@ -54,6 +54,7 @@ public class FilesController {
 		try {
 			filesManager.add(file, serversIds, null);
 		} catch (Exception e) {
+			e.printStackTrace();
 			model.addAttribute("errorMessages", Arrays.asList(e.getMessage()));
 			return "add-file";
 		}

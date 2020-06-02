@@ -74,7 +74,7 @@ public class FileRepository implements IFileRepository {
 		Assert.notNull(file.getHash(), "Hash must be calculated");
 		Assert.isTrue(file.getHash().length() == 32, "MD5 hash must have 32 characters");
 		Assert.isTrue(file.getSize() > 0, "File size must be greater than 0");
-		int result = jdbcTemplate.queryForObject("SELECT * FROM create_file(?,?,?);", Integer.class,
+		int result = jdbcTemplate.queryForObject("SELECT * FROM create_file(?,?,?,?);", Integer.class,
 				file.getName(), file.getHash(), file.getSize(),
 				directory == null ? null : directory.getId());
 		switch (result) {
