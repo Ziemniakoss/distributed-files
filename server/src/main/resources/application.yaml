@@ -1,11 +1,11 @@
 spring:
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/distributed
+    url: jdbc:postgresql://database/distributed
     username: postgres
     password: postgres
   servlet:
     multipart:
       max-file-size: 1GB
-server:
-  port: 9000
+#server:
+#  port: 9000

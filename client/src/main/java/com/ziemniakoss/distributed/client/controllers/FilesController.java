@@ -34,10 +34,10 @@ public class FilesController {
 	}
 
 	@GetMapping(value = {"/add-file", "/{dirId}/add-file"})
-	public String showAddingFilesPanel(@PathVariable(required = false) Integer dirId,  Model model) {
-		if(dirId != null){
+	public String showAddingFilesPanel(@PathVariable(required = false) Integer dirId, Model model) {
+		if (dirId != null) {
 			Optional<Directory> optDir = directoryRepository.get(dirId);
-			if(optDir.isEmpty()){
+			if (optDir.isEmpty()) {
 				return "error_404";
 			}
 			model.addAttribute("parentDir", optDir.get());
@@ -54,7 +54,7 @@ public class FilesController {
 			model.addAttribute("servers", serverRepository.getAll());
 			return "add-file";
 		}
-		System.out.println(dirId +" to id folderu");
+		System.out.println(dirId + " to id folderu");
 		try {
 			filesManager.add(file, serversIds, dirId);
 		} catch (Exception e) {
@@ -62,13 +62,17 @@ public class FilesController {
 			model.addAttribute("errorMessages", Collections.singletonList(e.getMessage()));
 			return "add-file";
 		}
-		return "redirect:/";
+	//	if (dirId == null) {
+			return "redirect:/";
+//		}else{
+//			return "redirect:/" + dirId;
+//		}
 	}
 
 
 	@GetMapping("file/{fileId}")
-	public String showFileDetails(@PathVariable int fileId, Model model){
-		try{
+	public String showFileDetails(@PathVariable int fileId, Model model) {
+		try {
 			model.addAttribute("file", filesManager.getFile(fileId));
 			model.addAttribute("servers", filesManager.getAllWithFile(fileId));
 		} catch (FileDoesNotExistsException e) {

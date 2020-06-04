@@ -82,7 +82,7 @@ public class FilesManager {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity entity = new HttpEntity(requestParameterMap, headers);
-		rs.postForObject(server.getUrl() + "/files/" + fileData.getId(), entity, String.class);
+		rs.postForObject("http://"+server.getName()+":8080/files/" + fileData.getId(), entity, String.class);//TODO tutaj na potrzeby dockera jest getName ale w przyszłosci lepsze byłoby po url
 		try {
 			serverFilesRepository.addToServer(fileData, server);
 		} catch (ServerDoesNotExistsException e) {
@@ -91,6 +91,10 @@ public class FilesManager {
 			log.error("File that does not exist in database(id={}) was sent to server {}", fileData.getId(), server.getUrl());
 			log.error("Please check if this file was not sent to another servers");
 		}
+	}
+
+	private String getServerUrl(Server server){
+		return server.getName()+":"+ server.getUrl().substring(server.getUrl().lastIndexOf(':'));
 	}
 
 	private String calculateMd5Hash(MultipartFile file) throws IOException {

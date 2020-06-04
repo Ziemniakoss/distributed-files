@@ -1,0 +1,30 @@
+version: "3"
+services:
+  client:
+    build: "./client"
+    ports:
+      - "8080:8080"
+    links:
+      - server1
+  database:
+    build: "./database"
+    ports:
+      - "5432:5432"
+  server1:
+    build: "./server"
+    ports:
+      - "9001:8080"
+    environment:
+      - ID=1
+  server2:
+    build: "./server"
+    ports:
+      - "9002:8080"
+    environment:
+      - ID=2
+  server3:
+    build: "./server"
+    ports:
+      - "9003:8080"
+    environment:
+      - ID=3
