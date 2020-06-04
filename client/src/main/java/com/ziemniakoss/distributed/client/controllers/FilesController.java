@@ -62,11 +62,11 @@ public class FilesController {
 			model.addAttribute("errorMessages", Collections.singletonList(e.getMessage()));
 			return "add-file";
 		}
-	//	if (dirId == null) {
+		if (dirId == null) {
 			return "redirect:/";
-//		}else{
-//			return "redirect:/" + dirId;
-//		}
+		}else{
+			return "redirect:/" + dirId;
+		}
 	}
 
 
