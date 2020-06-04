@@ -18,6 +18,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -81,7 +82,7 @@ public class FilesManager {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity entity = new HttpEntity(requestParameterMap, headers);
-		rs.postForObject(server.getUrl()+"/files/"+fileData.getId(), entity, String.class);
+		rs.postForObject(server.getUrl() + "/files/" + fileData.getId(), entity, String.class);
 		try {
 			serverFilesRepository.addToServer(fileData, server);
 		} catch (ServerDoesNotExistsException e) {
@@ -110,6 +111,14 @@ public class FilesManager {
 			}
 		}
 		return sb.toString();
+	}
+
+	public File getFile(int id) throws FileDoesNotExistsException {
+		return fileRepository.get(id).orElseThrow(FileDoesNotExistsException::new);
+	}
+
+	public List<Server> getAllWithFile(int id) throws FileDoesNotExistsException{
+		return serverFilesRepository.getAllWith(fileRepository.get(id).orElseThrow(FileDoesNotExistsException::new));
 	}
 
 	private class MultipartByteArrayResource extends ByteArrayResource {

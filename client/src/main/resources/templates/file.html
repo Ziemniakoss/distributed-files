@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${file.getName()}">Title</title>
+</head>
+<body>
+<main>
+	<section id="file-data">
+		<h1 th:text="${file.getName()}"></h1>
+		<table>
+			<tr>
+				<td>Utworzony</td>
+				<td th:text="${file.getCreationDate()}"></td>
+			</tr>
+			<tr>
+				<td>Rozmiar</td>
+				<td th:text="${file.getSize()}"></td>
+			</tr>
+			<tr>
+				<td>Hash</td>
+				<td th:text="${file.getHash()}"></td>
+			</tr>
+		</table>
+	</section>
+	<section id="servers-with-file">
+		<h2>Dostępny na serwerach</h2>
+		<table>
+			<thead>
+			<tr>
+				<th>Nazwa</th>
+				<th>Ip</th>
+				<th>Link do pobrania</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="server:${servers}">
+				<td th:text="${server.getName()}"></td>
+				<td th:text="${server.getUrl()}"></td>
+				<td>
+					<form th:action="${server.getUrl() +'/file/'+file.getId()}">
+						<button>Pobierz</button>
+					</form>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</section>
+</main>
+</body>
+</html>

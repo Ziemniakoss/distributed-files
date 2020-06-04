@@ -108,7 +108,7 @@ public class FileRepository implements IFileRepository {
 							"   LEFT JOIN directories d ON f.directory = d.id " +
 							" WHERE f.id = ?;";
 			return Optional.ofNullable(
-					jdbcTemplate.query(sql, rs -> {
+					jdbcTemplate.queryForObject(sql, (rs, rn) -> {
 						File result = new File();
 						result.setId(rs.getInt("id"));
 						result.setName(rs.getString("name"));
