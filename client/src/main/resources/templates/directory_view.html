@@ -58,9 +58,6 @@
 							<div th:text="${subDir.name}"></div>
 						</div>
 					</a>
-					<form class="delete-button" th:action="${'/' + subDir.getId()+'/delete'}">
-						<button class="delete-button">Usuń</button>
-					</form>
 				</section>
 			</li>
 			<li th:each="file : ${files}">
@@ -72,9 +69,6 @@
 							<div th:text="${file.getCreationDate()}" class="date-label"></div>
 						</div>
 					</a>
-					<form class="delete-button" th:action="${'/file/' + file.getId()+ '/delete'}">
-						<button class="delete-button">Usuń</button>
-					</form>
 				</section>
 			</li>
 		</ul>
