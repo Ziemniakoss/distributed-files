@@ -13,3 +13,22 @@ pobrać.
 
 Serwer plików służy jedynie do przechowywania plików i serwowania ich.
 Nie ma on żadnych informacji o innych maszynach w systemie poza serwerem z bazą danych.
+
+## Uruchamianie
+
+Aby uruchomić system złożony z 3 serweów plików, bazy danych i klienta należy wykonać w folderze
+głównym projektu wpisać
+
+```bash
+docker-compose build --parallel
+docker-compose up
+```
+
+lub na maszynach z zainstalowaną wersją docker-compose niewspierającą 
+równoległego budoawania kontenerów 
+
+```bash
+docker-compose up --build
+```
+
+Po wykonaniu komend na localhost:8080 powinien być dostępny klient
